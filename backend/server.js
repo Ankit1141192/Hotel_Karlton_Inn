@@ -32,7 +32,7 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/payment', paymentRoutes);
 
-app.get('/api/health', (req, res) => res.json({ status: 'ok', message: 'Hotel Booking API is running 🏨' }));
+app.get('/api/health', (req, res) => res.json({ status: 'ok', message: 'Hotel Booking API is running' }));
 
 app.use(notFound);
 app.use(errorHandler);
