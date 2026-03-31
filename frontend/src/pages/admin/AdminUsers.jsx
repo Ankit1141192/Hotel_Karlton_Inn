@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { adminService } from "../../services/api";
+import { adminService } from "../../Services/api";
 import { FiSearch, FiTrash2, FiUser, FiShield, FiMail, FiCalendar } from 'react-icons/fi';
 import toast from "react-hot-toast";
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { hotelService } from '../../services/api';
+import { hotelService } from '../../Services/api';
 import { FiPlus, FiEdit, FiTrash2, FiMapPin, FiStar, FiHome, FiSearch } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';

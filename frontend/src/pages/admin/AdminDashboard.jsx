@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { adminService } from '../../services/api';
+import { adminService } from '../../Services/api';
 import { FiUsers, FiBriefcase, FiCalendar, FiTrendingUp, FiClock, FiUser, FiHome, FiArrowRight } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
