@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiFilter, FiSearch, FiMapPin, FiUsers, FiStar, FiChevronUp, FiArrowRight } from 'react-icons/fi';
-import { hotelService } from '../services/api';
+import { hotelService } from '../Services/api';
 
 const Rooms = () => {
   const [searchParams, setSearchParams] = useSearchParams();

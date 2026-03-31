@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiStar, FiArrowRight } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
-import { hotelService } from '../services/api';
+import { hotelService } from '../Services/api';
 import Herosection from '../components/Herosection';
 import Testimonials from '../components/Testimonials';
 import CTA from '../components/CTA';

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiMapPin, FiStar, FiWifi, FiCoffee, FiWind, FiTv, FiShield, FiMail, FiPhone, FiArrowLeft, FiChevronRight, FiCalendar, FiUsers } from 'react-icons/fi';
-import { hotelService, roomService, bookingService } from '../services/api';
+import { hotelService, roomService, bookingService } from '../Services/api';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 

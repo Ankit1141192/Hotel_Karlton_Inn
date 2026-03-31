@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { bookingService, paymentService } from '../services/api';
+import { bookingService, paymentService } from '../Services/api';
 import { FiCreditCard, FiShield, FiLock, FiCalendar, FiMapPin, FiUsers, FiArrowLeft } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { bookingService } from '../services/Api';
+import { bookingService } from '../Services/api';
 import {
     FiUser, FiMail, FiPhone, FiCalendar, FiChevronRight,
     FiXCircle, FiClock, FiCheckCircle, FiLayout, FiLogOut, FiShield
