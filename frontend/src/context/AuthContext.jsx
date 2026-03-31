@@ -4,11 +4,14 @@ import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
 
+const BASE_URL = 'http://localhost:5000/api';
+
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [token, setToken] = useState(localStorage.getItem('token'));
+    const [token, setToken] = useState(() => localStorage.getItem('token'));
 
+    // Whenever token changes, set axios default header and re-fetch user
     useEffect(() => {
         if (token) {
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -18,38 +21,48 @@ export const AuthProvider = ({ children }) => {
         }
     }, [token]);
 
+    // Fetch current logged-in user — works for both regular users and admins
+    // (both share the same /api/auth/me endpoint because the JWT is identical)
     const fetchMe = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/auth/me');
+            const { data } = await axios.get(`${BASE_URL}/auth/me`);
             setUser(data.user);
         } catch (err) {
-            logout();
+            // Token is invalid / expired — clear everything
+            clearAuth();
         } finally {
             setLoading(false);
         }
     };
 
+    const clearAuth = () => {
+        setToken(null);
+        setUser(null);
+        localStorage.removeItem('token');
+        delete axios.defaults.headers.common['Authorization'];
+    };
+
+    /**
+     * Unified Login — works for both regular users and admins.
+     * The backend /auth/login endpoint checks the email/password across all users.
+     */
     const login = async (email, password) => {
         try {
-            const { data } = await axios.post('http://localhost:5000/api/auth/login', { email, password });
-            setToken(data.token);
-            setUser(data.user);
-            localStorage.setItem('token', data.token);
-            toast.success('Welcome back!');
-            return true;
+            const { data } = await axios.post(`${BASE_URL}/auth/login`, { email, password });
+            applyAuth(data.token, data.user);
+            toast.success(`Welcome back, ${data.user.name}!`);
+            return data.user; // Return user object for role-based redirection
         } catch (err) {
             toast.error(err.response?.data?.message || 'Login failed');
-            return false;
+            return null;
         }
     };
 
     const register = async (userData) => {
         try {
-            const { data } = await axios.post('http://localhost:5000/api/auth/register', userData);
-            setToken(data.token);
-            setUser(data.user);
-            localStorage.setItem('token', data.token);
-            toast.success('Account created successfully');
+            const { data } = await axios.post(`${BASE_URL}/auth/register`, userData);
+            applyAuth(data.token, data.user);
+            toast.success('Account created successfully!');
             return true;
         } catch (err) {
             toast.error(err.response?.data?.message || 'Registration failed');
@@ -57,19 +70,35 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const adminRegister = async (userData) => {
+        try {
+            const { data } = await axios.post(`${BASE_URL}/admin/auth/register`, userData);
+            applyAuth(data.token, data.user);
+            toast.success('Admin account created successfully!');
+            return true;
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Admin registration failed');
+            return false;
+        }
+    };
+
+    const applyAuth = (newToken, newUser) => {
+        setToken(newToken);
+        setUser(newUser);
+        localStorage.setItem('token', newToken);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+    };
+
     const logout = () => {
-        setToken(null);
-        setUser(null);
-        localStorage.removeItem('token');
-        delete axios.defaults.headers.common['Authorization'];
-        toast.success('Logged out');
+        clearAuth();
+        toast.success('Logged out successfully');
     };
 
     const updateProfile = async (userData) => {
         try {
-            const { data } = await axios.put('http://localhost:5000/api/users/profile', userData);
+            const { data } = await axios.put(`${BASE_URL}/users/profile`, userData);
             setUser(data.user);
-            toast.success('Profile updated');
+            toast.success('Profile updated successfully');
             return true;
         } catch (err) {
             toast.error(err.response?.data?.message || 'Update failed');
@@ -78,7 +107,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout, updateProfile }}>
+        <AuthContext.Provider value={{ user, loading, login, register, adminRegister, logout, updateProfile, token }}>
             {children}
         </AuthContext.Provider>
     );

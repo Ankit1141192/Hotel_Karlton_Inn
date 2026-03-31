@@ -4,6 +4,7 @@ const api = axios.create({
     baseURL: 'http://localhost:5000/api',
 });
 
+// Attach token from localStorage to every request automatically
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -41,9 +42,37 @@ export const bookingService = {
 };
 
 export const adminService = {
-    getStats: () => api.get('/users/admin/stats'),
-    getUsers: () => api.get('/users'),
-    deleteUser: (id) => api.delete(`/users/${id}`),
+    // Dashboard stats — correct admin route
+    getStats: () => api.get('/admin/stats'),
+    getAdminStats: () => api.get('/admin/stats'),   // alias used by AdminDashboard component
+
+    // Auth
+    adminRegister: (data) => api.post('/auth/admin/register', data),
+    adminLogin: (data) => api.post('/auth/login', data),
+
+    // Users
+    getUsers: () => api.get('/admin/users'),
+    getUser: (id) => api.get(`/admin/users/${id}`),
+    updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
+    deleteUser: (id) => api.delete(`/admin/users/${id}`),
+
+    // Hotels
+    getHotels: () => api.get('/admin/hotels'),
+    createHotel: (data) => api.post('/admin/hotels', data),
+    updateHotel: (id, data) => api.put(`/admin/hotels/${id}`, data),
+    deleteHotel: (id) => api.delete(`/admin/hotels/${id}`),
+
+    // Rooms
+    getRooms: () => api.get('/admin/rooms'),
+    createRoom: (hotelId, data) => api.post(`/admin/rooms/hotel/${hotelId}`, data),
+    updateRoom: (id, data) => api.put(`/admin/rooms/${id}`, data),
+    deleteRoom: (id) => api.delete(`/admin/rooms/${id}`),
+
+    // Bookings
+    getBookings: () => api.get('/admin/bookings'),
+    getBooking: (id) => api.get(`/admin/bookings/${id}`),
+    updateBookingStatus: (id, data) => api.put(`/admin/bookings/${id}/status`, data),
+    deleteBooking: (id) => api.delete(`/admin/bookings/${id}`),
 };
 
 export const paymentService = {

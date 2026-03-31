@@ -21,6 +21,10 @@ const generateToken = (id) => {
 
 
 const register = asyncHandler(async (req, res) => {
+    if (!req.body) {
+        res.status(400);
+        throw new Error('Request body is missing. Ensure you are sending JSON data.');
+    }
     const { name, email, password, phone } = req.body;
 
     // Validation
@@ -72,6 +76,10 @@ const register = asyncHandler(async (req, res) => {
  * @access  Public
  */
 const login = asyncHandler(async (req, res) => {
+    if (!req.body) {
+        res.status(400);
+        throw new Error('Request body is missing. Ensure you are sending JSON data.');
+    }
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -129,8 +137,67 @@ const getMe = asyncHandler(async (req, res) => {
 });
 
 
+/**
+ * @desc    Admin Register (API Only)
+ * @route   POST /api/auth/admin/register
+ * @access  Public
+ */
+const adminRegister = asyncHandler(async (req, res) => {
+    // Safety check for missing request body
+    if (!req.body || Object.keys(req.body).length === 0) {
+        res.status(400);
+        throw new Error('Request body is missing. Ensure you are sending JSON data in the Body tab (select raw and JSON).');
+    }
+
+    const { name, email, password, phone } = req.body;
+
+    if (!name || !email || !password) {
+        res.status(400);
+        const missing = [];
+        if (!name) missing.push('name');
+        if (!email) missing.push('email');
+        if (!password) missing.push('password');
+        throw new Error(`Missing required fields: ${missing.join(', ')}`);
+    }
+
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+        res.status(400);
+        throw new Error('User already exists');
+    }
+
+    const user = await User.create({
+        name,
+        email,
+        password,
+        phone,
+        role: 'admin'
+    });
+
+    if (user) {
+        res.status(201).json({
+            success: true,
+            message: 'Admin registered successfully',
+            token: generateToken(user._id),
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                phone: user.phone
+            }
+        });
+    } else {
+        res.status(400);
+        throw new Error('Invalid admin data');
+    }
+});
+
+
 module.exports = {
     register,
     login,
-    getMe
+    getMe,
+    adminRegister
 };

@@ -15,8 +15,15 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const success = await login(email, password);
-        if (success) navigate('/');
+        const loggedUser = await login(email, password);
+        if (loggedUser) {
+            // Redirect based on role
+            if (loggedUser.role === 'admin') {
+                navigate('/admin');
+            } else {
+                navigate('/');
+            }
+        }
         setLoading(false);
     };
 
